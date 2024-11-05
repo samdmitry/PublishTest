@@ -46,29 +46,31 @@ android {
     }
 }
 
-val localProperties = Properties()
-rootDir.resolve("local.properties")
-    .takeIf { it.exists() }
-    ?.inputStream()
-    ?.use { localProperties.load(it) }
+project.afterEvaluate {
+    val localProperties = Properties()
+    rootDir.resolve("local.properties")
+        .takeIf { it.exists() }
+        ?.inputStream()
+        ?.use { localProperties.load(it) }
 
-publishing.publications
-    .withType<MavenPublication>()
-    .configureEach {
-        groupId = "com.samdmitry.published"
-        version = "0.0.1"
-    }
+    publishing.publications
+        .withType<MavenPublication>()
+        .configureEach {
+            groupId = "com.samdmitry.published"
+            version = "0.0.1"
+        }
 
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/samdmitry/PublishTest")
-            credentials {
-                username =
-                    localProperties.getProperty("github.user") ?: System.getenv("GITHUB_ACTOR")
-                password =
-                    localProperties.getProperty("github.token") ?: System.getenv("GITHUB_TOKEN")
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/samdmitry/PublishTest")
+                credentials {
+                    username =
+                        localProperties.getProperty("github.user") ?: System.getenv("GITHUB_ACTOR")
+                    password =
+                        localProperties.getProperty("github.token") ?: System.getenv("GITHUB_TOKEN")
+                }
             }
         }
     }
