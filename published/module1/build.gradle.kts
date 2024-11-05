@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.konan.properties.loadProperties
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -8,7 +8,7 @@ plugins {
 
 kotlin {
     androidTarget {
-        publishAllLibraryVariants()
+        publishLibraryVariants("release")
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
@@ -31,9 +31,6 @@ kotlin {
         commonMain.dependencies {
             api(projects.published.module2)
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
     }
 }
 
@@ -49,25 +46,23 @@ android {
     }
 }
 
-publishing.publications
-    .withType<MavenPublication>()
-    .configureEach {
-        groupId = "com.samdmitry.module1"
-        version = "0.0.1"
-    }
+project.afterEvaluate {
+    publishing.publications
+        .withType<MavenPublication>()
+        .configureEach {
+            groupId = "com.samdmitry.published"
+            version = libs.versions.currentVersion.get()
+        }
 
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/samdmitry/PublishTest")
-            credentials {
-                username =
-                    loadProperties(rootDir.path + "/local.properties").getProperty("github.username")
-                        ?: System.getenv("GITHUB_ACTOR")
-                password =
-                    loadProperties(rootDir.path + "/local.properties").getProperty("github.token")
-                        ?: System.getenv("GITHUB_TOKEN")
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/samdmitry/PublishTest")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
             }
         }
     }

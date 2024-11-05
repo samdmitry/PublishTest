@@ -23,12 +23,14 @@ kotlin {
         }
     }
 
+    //noinspection UseTomlInstead
     sourceSets {
         commonMain.dependencies {
             implementation(projects.published.module1)
+//            implementation("com.samdmitry.published:module1:0.0.1")
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
+        androidMain.dependencies {
+//            implementation("com.samdmitry.published:module1:0.0.1")
         }
     }
 }
