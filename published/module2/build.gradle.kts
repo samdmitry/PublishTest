@@ -50,17 +50,11 @@ android {
 }
 
 project.afterEvaluate {
-    val localProperties = Properties()
-    rootDir.resolve("local.properties")
-        .takeIf { it.exists() }
-        ?.inputStream()
-        ?.use { localProperties.load(it) }
-
     publishing.publications
         .withType<MavenPublication>()
         .configureEach {
             groupId = "com.samdmitry.published"
-            version = "0.0.1"
+            version = libs.versions.currentVersion.get()
         }
 
     publishing {
@@ -69,10 +63,8 @@ project.afterEvaluate {
                 name = "GitHubPackages"
                 url = uri("https://maven.pkg.github.com/samdmitry/PublishTest")
                 credentials {
-                    username =
-                        localProperties.getProperty("github.user") ?: System.getenv("GITHUB_ACTOR")
-                    password =
-                        localProperties.getProperty("github.token") ?: System.getenv("GITHUB_TOKEN")
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
                 }
             }
         }
