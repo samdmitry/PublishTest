@@ -63,11 +63,9 @@ publishing {
             url = uri("https://maven.pkg.github.com/samdmitry/PublishTest")
             credentials {
                 username =
-                    loadProperties(rootDir.path + "/local.properties").getProperty("github.username")
-                        ?: System.getenv("GITHUB_ACTOR")
+                    System.getenv("GITHUB_ACTOR")
                 password =
-                    loadProperties(rootDir.path + "/local.properties").getProperty("github.token")
-                        ?: System.getenv("GITHUB_TOKEN")
+                    System.getenv("GITHUB_TOKEN")
             }
         }
     }
