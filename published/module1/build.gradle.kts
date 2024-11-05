@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.konan.properties.loadProperties
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
