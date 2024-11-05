@@ -1,10 +1,14 @@
+import org.jetbrains.kotlin.konan.properties.loadProperties
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
+    `maven-publish`
 }
 
 kotlin {
     androidTarget {
+        publishAllLibraryVariants()
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
@@ -42,5 +46,29 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+publishing.publications
+    .withType<MavenPublication>()
+    .configureEach {
+        groupId = "com.samdmitry.module1"
+        version = "0.0.1"
+    }
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/samdmitry/PublishTest")
+            credentials {
+                username =
+                    loadProperties(rootDir.path + "/local.properties").getProperty("github.username")
+                        ?: System.getenv("GITHUB_ACTOR")
+                password =
+                    loadProperties(rootDir.path + "/local.properties").getProperty("github.token")
+                        ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 }
