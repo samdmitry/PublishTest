@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
@@ -6,7 +8,7 @@ plugins {
 
 kotlin {
     androidTarget {
-        publishAllLibraryVariants()
+        publishLibraryVariants("release")
         compilations.all {
             kotlinOptions {
                 jvmTarget = "1.8"
@@ -29,9 +31,6 @@ kotlin {
         commonMain.dependencies {
             api(projects.published.module2)
         }
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
-        }
     }
 }
 
@@ -47,10 +46,16 @@ android {
     }
 }
 
+val localProperties = Properties()
+rootDir.resolve("local.properties")
+    .takeIf { it.exists() }
+    ?.inputStream()
+    ?.use { localProperties.load(it) }
+
 publishing.publications
     .withType<MavenPublication>()
     .configureEach {
-        groupId = "com.samdmitry.module1"
+        groupId = "com.samdmitry.published"
         version = "0.0.1"
     }
 
@@ -61,9 +66,9 @@ publishing {
             url = uri("https://maven.pkg.github.com/samdmitry/PublishTest")
             credentials {
                 username =
-                    System.getenv("GITHUB_ACTOR")
+                    localProperties.getProperty("github.user") ?: System.getenv("GITHUB_ACTOR")
                 password =
-                    System.getenv("GITHUB_TOKEN")
+                    localProperties.getProperty("github.token") ?: System.getenv("GITHUB_TOKEN")
             }
         }
     }
